@@ -26,6 +26,7 @@ RUN apt-get update && apt-get install ffmpeg libsm6 libxext6  -y && \
     cd ../knn && \
     python3 setup.py install && \
     cd ../graspnetAPI && \
-    pip install .
+    pip install . && \
+    pip install -i https://pypi.tuna.tsinghua.edu.cn/simple psutil==5.9.1
 WORKDIR /app/graspnet-baseline
 CMD ["python3", "demo_http_server.py", "--checkpoint_path","checkpoint/checkpoint-rs.tar"]
