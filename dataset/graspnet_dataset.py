@@ -9,7 +9,16 @@ import scipy.io as scio
 from PIL import Image
 
 import torch
-from torch._six import container_abcs
+# autopep8: off
+# from torch._six import container_abcs
+# 参考 https://blog.csdn.net/qq_45281807/article/details/121843592
+TORCH_MAJOR = int(torch.__version__.split('.')[0])
+TORCH_MINOR = int(torch.__version__.split('.')[1])
+if TORCH_MAJOR == 1 and TORCH_MINOR < 8:
+    from torch._six import container_abcs
+else:
+    import collections.abc as container_abcs
+# autopep8: on
 from torch.utils.data import Dataset
 from tqdm import tqdm
 
