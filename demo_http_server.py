@@ -21,10 +21,16 @@ app = Flask(__name__)
 grasp_net = get_net()
 
 
-def get_and_process_data2(color, depth, workspace_mask, intrinsic, factor_depth):
+def get_and_process_data2(color,
+                          depth,
+                          workspace_mask,
+                          intrinsic,
+                          factor_depth,
+                          camera_width=1280.0,
+                          camera_height=720.0):
     # generate cloud
     camera = CameraInfo(
-        1280.0, 720.0, intrinsic[0][0], intrinsic[1][1], intrinsic[0][2], intrinsic[1][2], factor_depth)
+        camera_width, camera_height, intrinsic[0][0], intrinsic[1][1], intrinsic[0][2], intrinsic[1][2], factor_depth)
     cloud = create_point_cloud_from_depth_image(depth, camera, organized=True)
 
     # get valid points
@@ -90,12 +96,15 @@ def grasp():
     workspace_mask = request.json['workspace_mask']
     intrinsics = request.json['meta']['intrinsic_matrix']
     factor_depth = request.json['meta']['factor_depth']
+    camera_width = request.json['meta']['camera_width']
+    camera_height = request.json['meta']['camera_height']
 
     color = b64_to_np_image(color)
     depth = b64_to_np_image(depth)
     workspace_mask = b64_to_np_image(workspace_mask)
 
-    end_points, cloud = get_and_process_data2(color, depth, workspace_mask, intrinsics, factor_depth)
+    end_points, cloud = get_and_process_data2(color, depth, workspace_mask, intrinsics, factor_depth,
+                                              camera_height=camera_height, camera_width=camera_width)
 
     gg = get_grasps(grasp_net, end_points)
 
